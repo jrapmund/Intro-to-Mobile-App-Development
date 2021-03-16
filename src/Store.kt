@@ -22,4 +22,5 @@ class Store(val id:Int, var name:String, var location:String?=null) {
         }
     }
 
+
 }

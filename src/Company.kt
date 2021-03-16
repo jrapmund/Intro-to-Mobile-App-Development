@@ -12,6 +12,10 @@ object Company {
         this.inserter()
     }
 
+    fun find(cond:(Store) -> Boolean) : List<Store> {
+        return stores.filter(cond)
+    }
+
     fun store(inserter:(Store.()->Unit)?) {
         val storeContext = Store(numOfStores + 1, "NA", null)
 

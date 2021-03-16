@@ -8,6 +8,7 @@ import io.ktor.routing.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.*
 import kotlin.random.Random
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -24,7 +25,12 @@ fun Application.module(testing: Boolean = false) {
         get("/stores") {
             println("The /stores get service was invoked.")
 
-            val jsonStores = Json.encodeToString(Company.stores)
+            var storeNames = mutableListOf<Pair<Int, String>>()
+
+            for(store in Company.stores)
+                storeNames.add(Pair(store.id, store.name))
+
+            val jsonStores = Json.encodeToString(storeNames)
             call.respondText (
                 jsonStores,
                 status= HttpStatusCode.OK,
@@ -35,8 +41,29 @@ fun Application.module(testing: Boolean = false) {
         post("/stores"){
             println("The /stores post service was invoked.")
         }
-        get("/stores/departments") {
+        get("/stores/departments/{storeID}") {
             println("The /stores/departments get service was invoked.")
+            println("id requested : ${call.parameters["storeID"]}")
+
+            val sid = call.parameters["storeID"]?.toInt()?:-1
+
+            val store = Company.find {
+                it.id == sid
+            }[0]
+
+            val departmentDetails = mutableListOf<Pair<String, Int>>()
+
+            for(department in store.departments) {
+                departmentDetails.add(Pair(department.name, department.aisle))
+            }
+
+            val responseData = Json.encodeToString(departmentDetails)
+
+            call.respondText (
+                responseData,
+                status= HttpStatusCode.OK,
+                contentType=ContentType.Text.Plain
+            )
         }
         post("/stores/departments"){
             println("The /stores/departments post service was invoked.")

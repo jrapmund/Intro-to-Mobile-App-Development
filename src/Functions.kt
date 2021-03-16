@@ -35,7 +35,7 @@ object Functions {
                 }
                 department {
                     name = "Beauty"
-                    aisle = 1
+                    aisle = 2
                     employee {
                         firstName = "Draha"
                         lastName = "Bronislav"
